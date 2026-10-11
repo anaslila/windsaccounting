@@ -1,407 +1,1771 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#102d3a">
-  <meta name="description" content="Winds Accounting 26 is launching soon. A better accounting experience is on its way.">
-  <title>Winds Accounting 26 — Launching Soon</title>
-  <link rel="icon" type="image/jpeg" href="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU=">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: light;
-      --navy: #102d3a;
-      --navy-soft: #183e4b;
-      --teal: #168b83;
-      --teal-light: #e6f5f2;
-      --ink: #172a33;
-      --muted: #6b7c84;
-      --line: #e5ecee;
-      --surface: #ffffff;
-      --background: #f7fafb;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winds Accounting 26 - v1.03</title>
+    <link rel="icon" type="image/jpeg" href="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU=">
+    <style>
+        :root {
+            --primary: #1a2942;
+            --primary-light: #2c3e5d;
+            --accent: #0d9488;
+            --accent-hover: #0f766e;
+            --bg-light: #f3f4f6;
+            --bg-white: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --font-family: 'Arial Narrow', Arial, sans-serif;
+        }
 
-    * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
 
-    html { min-height: 100%; }
+        input, textarea, select {
+            user-select: text;
+            -webkit-user-select: text;
+            -ms-user-select: text;
+        }
 
-    body {
-      min-height: 100vh;
-      margin: 0;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(ellipse at 84% 16%, rgba(22, 139, 131, 0.08), transparent 34%),
-        radial-gradient(ellipse at 10% 90%, rgba(16, 45, 58, 0.05), transparent 36%),
-        var(--background);
-      display: flex;
-      flex-direction: column;
-    }
+        /* Loader */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.3s ease;
+        }
+        .heartbeat-icon {
+            width: 80px; height: 80px;
+            animation: heartbeat 1s infinite alternate;
+            margin-bottom: 16px;
+            pointer-events: none;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1.1); }
+        }
+        .loading-text { font-size: 18px; font-weight: bold; color: var(--primary); font-family: var(--font-family); }
 
-    a { color: inherit; }
+        /* Icons */
+        svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; pointer-events: none; }
+        img { pointer-events: none; }
+        
+        /* Layout */
+        .sidebar {
+            width: 240px;
+            background-color: var(--primary);
+            color: var(--bg-white);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: width 0.3s;
+        }
+        
+        .brand {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--primary-light);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .brand img {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .brand-text { font-weight: bold; font-size: 16px; white-space: nowrap; }
+        
+        .nav-menu { flex: 1; overflow-y: auto; padding: 12px 0; }
+        .nav-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+        .nav-item:hover, .nav-item.active { background-color: var(--primary-light); color: var(--bg-white); }
+        
+        .sidebar-footer {
+            padding: 12px;
+            background-color: var(--primary-light);
+            text-align: center;
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-footer a { display: inline-block; text-decoration: none; color: #cbd5e1; opacity: 0.9; transition: opacity 0.2s; }
+        .sidebar-footer a:hover { opacity: 1; }
+        .sidebar-footer img { max-width: 120px; margin-top: 4px; pointer-events: auto; }
 
-    .topbar {
-      width: 100%;
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 26px 34px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
 
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 13px;
-      text-decoration: none;
-      min-width: 0;
-    }
+        .topbar {
+            height: 60px;
+            background-color: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
 
-    .brand-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-      border-radius: 10px;
-      background: #fff;
-      border: 1px solid rgba(16, 45, 58, 0.08);
-    }
+        .company-selector {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-    .brand-name {
-      display: block;
-      color: var(--navy);
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.55px;
-      line-height: 1.2;
-    }
+        select, input, textarea {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: normal;
+            font-family: var(--font-family);
+            background-color: var(--bg-white);
+            color: var(--text-main);
+        }
+        
+        select:focus, input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2); }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
 
-    .brand-caption {
-      display: block;
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1.55px;
-      text-transform: uppercase;
-      margin-top: 5px;
-    }
+        .btn-primary { background-color: var(--accent); color: var(--bg-white); }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .btn-secondary { background-color: var(--bg-white); color: var(--text-main); border: 1px solid var(--border); }
+        .btn-secondary:hover { background-color: var(--bg-light); }
+        .btn-danger { background-color: var(--danger); color: var(--bg-white); }
+        .btn-icon { background: none; border: none; padding: 4px; cursor: pointer; color: var(--text-muted); }
+        .btn-icon:hover { color: var(--primary); }
+        .btn-icon.danger:hover { color: var(--danger); }
+        
+        .content-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
 
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 14px;
-      border: 1px solid #d7e8e5;
-      border-radius: 999px;
-      background: rgba(255,255,255,.78);
-      color: #276b65;
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 0 0 4px rgba(22,139,131,.10);
-    }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    main {
-      flex: 1;
-      width: 100%;
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 44px 34px 70px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.08fr) minmax(300px, .92fr);
-      align-items: center;
-      gap: clamp(40px, 7vw, 96px);
-    }
+        /* Typography & Utilities */
+        h1 { font-size: 24px; font-weight: bold; margin-bottom: 24px; color: var(--primary); }
+        h2 { font-size: 18px; font-weight: bold; margin-bottom: 16px; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .mt-4 { margin-top: 16px; }
+        .mb-4 { margin-bottom: 16px; }
+        .flex { display: flex; gap: 16px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Cards & Dashboard */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: var(--bg-white);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-title { color: var(--text-muted); font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-value { font-size: 28px; font-weight: bold; margin-top: 8px; color: var(--primary); font-variant-numeric: tabular-nums; }
 
-    .copy { padding: 10px 0; }
+        /* Tables */
+        .table-container {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        th { background-color: #f8fafc; font-weight: bold; color: var(--text-muted); text-transform: uppercase; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #f8fafc; }
+        .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+        
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            background: var(--bg-white);
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-weight: bold; color: var(--text-main); font-size: 14px; }
+        .form-actions { margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px; }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 25px;
-      color: var(--teal);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 2.1px;
-      text-transform: uppercase;
-    }
+        /* Voucher Entry Grid */
+        .voucher-grid { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .voucher-grid th { background: var(--primary); color: white; border: 1px solid var(--primary-light); }
+        .voucher-grid td { border: 1px solid var(--border); padding: 8px; }
+        .voucher-grid input, .voucher-grid select { width: 100%; border: none; background: transparent; padding: 4px; font-size: 14px; font-weight: normal; font-family: inherit; }
+        .voucher-grid input:focus, .voucher-grid select:focus { outline: 1px solid var(--accent); background: white; }
+        
+        /* Combo Box Searchable Dropdown */
+        .combo-container { position: relative; width: 100%; }
+        .combo-input { width: 100%; padding: 4px; border: none; background: transparent; font-family: var(--font-family); font-weight: normal; }
+        .combo-input:focus { outline: 1px solid var(--accent); background: white; }
+        .combo-list { 
+            display: none; position: absolute; top: 100%; left: 0; width: 100%; 
+            max-height: 200px; overflow-y: auto; background: white; border: 1px solid var(--border); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 100; border-radius: 0 0 4px 4px;
+        }
+        .combo-list-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .combo-list-item:hover, .combo-list-item.selected { background-color: var(--bg-light); color: var(--primary); font-weight: bold; }
 
-    .eyebrow::before {
-      content: "";
-      width: 28px;
-      height: 2px;
-      background: var(--teal);
-      border-radius: 2px;
-    }
+        /* Modals & Toasts */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { padding: 12px 20px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: slideIn 0.3s forwards; pointer-events: auto; }
+        .toast.success { background-color: var(--success); }
+        .toast.error { background-color: var(--danger); }
+        .toast.warning { background-color: var(--warning); }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-    h1 {
-      max-width: 690px;
-      margin: 0;
-      color: var(--navy);
-      font-size: clamp(42px, 5.7vw, 74px);
-      line-height: 1.06;
-      letter-spacing: -3.6px;
-      font-weight: 800;
-    }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--bg-white); padding: 24px; border-radius: 8px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .modal-close { background: none; border: none; cursor: pointer; color: var(--text-muted); }
 
-    h1 .accent { color: var(--teal); }
-
-    .lead {
-      max-width: 520px;
-      margin: 26px 0 0;
-      color: #52656e;
-      font-size: clamp(15px, 1.45vw, 17px);
-      line-height: 1.9;
-    }
-
-    .thank-you {
-      margin: 25px 0 0;
-      color: var(--navy-soft);
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .launch-line {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 36px;
-      color: var(--navy);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .launch-icon {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-      color: var(--teal);
-      background: var(--teal-light);
-    }
-
-    .launch-icon svg { width: 19px; height: 19px; }
-
-    .visual {
-      position: relative;
-      min-height: 400px;
-      display: grid;
-      place-items: center;
-    }
-
-    .visual::before {
-      content: "";
-      position: absolute;
-      width: min(100%, 410px);
-      aspect-ratio: 1;
-      border: 1px solid rgba(22,139,131,.15);
-      border-radius: 50%;
-    }
-
-    .visual::after {
-      content: "";
-      position: absolute;
-      width: min(80%, 330px);
-      aspect-ratio: 1;
-      border: 1px solid rgba(16,45,58,.09);
-      border-radius: 50%;
-    }
-
-    .brand-card {
-      position: relative;
-      z-index: 1;
-      width: min(100%, 350px);
-      padding: 38px 28px 32px;
-      border: 1px solid rgba(226,235,237,.95);
-      border-radius: 24px;
-      background: rgba(255,255,255,.88);
-      box-shadow: 0 28px 80px rgba(16,45,58,.10), 0 3px 12px rgba(16,45,58,.03);
-      text-align: center;
-      backdrop-filter: blur(10px);
-    }
-
-    .hero-logo {
-      display: block;
-      width: 112px;
-      height: 112px;
-      object-fit: contain;
-      margin: 0 auto 23px;
-      border-radius: 18px;
-      background: #fff;
-    }
-
-    .brand-card h2 {
-      margin: 0;
-      color: var(--navy);
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .brand-card p {
-      margin: 9px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .card-divider {
-      height: 1px;
-      margin: 25px 0 19px;
-      background: var(--line);
-    }
-
-    .card-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #276b65;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.15px;
-      text-transform: uppercase;
-    }
-
-    .card-status svg { width: 15px; height: 15px; }
-
-    footer {
-      width: 100%;
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 22px 34px 26px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      border-top: 1px solid rgba(220,230,233,.8);
-      color: #77878e;
-      font-size: 11px;
-    }
-
-    .footer-brand {
-      color: var(--navy-soft);
-      font-weight: 700;
-    }
-
-    @media (max-width: 760px) {
-      .topbar { padding: 20px 22px; }
-      .brand-logo { width: 42px; height: 42px; }
-      .brand-name { font-size: 15px; }
-      .brand-caption { font-size: 9px; letter-spacing: 1.2px; }
-      .status { padding: 9px 11px; font-size: 11px; }
-      main {
-        grid-template-columns: 1fr;
-        gap: 30px;
-        padding: 38px 25px 48px;
-      }
-      h1 { letter-spacing: -2.4px; }
-      .visual { min-height: 360px; }
-      .brand-card { max-width: 330px; }
-      footer { padding: 20px 24px; }
-    }
-
-    @media (max-width: 430px) {
-      .topbar { align-items: flex-start; }
-      .status { gap: 7px; font-size: 10px; }
-      .status-dot { width: 6px; height: 6px; }
-      main { padding-top: 30px; }
-      h1 { font-size: 43px; }
-      .lead { font-size: 15px; }
-      .visual { min-height: 325px; }
-      .brand-card { padding: 30px 20px 26px; }
-      .hero-logo { width: 92px; height: 92px; }
-      footer { align-items: flex-start; flex-direction: column; gap: 7px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; }
-    }
-  </style>
+        /* Print Styles */
+        @media print {
+            .sidebar, .topbar, .btn-primary, .btn-secondary, .form-actions, .toast-container { display: none !important; }
+            .main-content { padding: 0; margin: 0; }
+            .content-area { padding: 0; overflow: visible; }
+            .card { border: none; box-shadow: none; padding: 0; }
+            table { border: 1px solid #000; }
+            th, td { border: 1px solid #000; color: #000; }
+            * { color: #000 !important; background: transparent !important; }
+        }
+    </style>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="Winds Accounting 26 home">
-      <img
-        class="brand-logo"
-        src="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU="
-        alt="Winds Accounting 26 logo">
-      <span>
-        <span class="brand-name">Winds Accounting 26</span>
-        <span class="brand-caption">Accounting, made clear</span>
-      </span>
-    </a>
-    <div class="status"><span class="status-dot" aria-hidden="true"></span>Website launching soon</div>
-  </header>
 
-  <main>
-    <section class="copy" aria-labelledby="page-title">
-      <p class="eyebrow">Something new is on the way</p>
-      <h1 id="page-title">A clearer way to manage <span class="accent">your accounts.</span></h1>
-      <p class="lead">
-        We’re putting the finishing touches on Winds Accounting 26.
-        A professional accounting experience is on its way, designed to help
-        businesses keep their numbers organized and their work moving.
-      </p>
-      <p class="thank-you">Thank you for your patience.</p>
-      <div class="launch-line">
-        <span class="launch-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"></circle>
-            <path d="M12 7v5l3.5 2"></path>
-          </svg>
-        </span>
-        <span>We’ll be live soon. Please check back shortly.</span>
-      </div>
-    </section>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <img src="https://i.postimg.cc/bY29hqp2/image.png" class="heartbeat-icon" alt="Loading">
+        <div class="loading-text">Loading Books...</div>
+    </div>
 
-    <aside class="visual" aria-label="Winds Accounting 26 launch information">
-      <div class="brand-card">
-        <img
-          class="hero-logo"
-          src="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU="
-          alt="Winds Accounting 26 water-wave logo">
-        <h2>Winds Accounting 26</h2>
-        <p>A smarter workspace for everyday accounting.</p>
-        <div class="card-divider"></div>
-        <div class="card-status">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 3v3"></path>
-            <path d="M12 18v3"></path>
-            <path d="M3 12h3"></path>
-            <path d="M18 12h3"></path>
-            <path d="m5.64 5.64 2.12 2.12"></path>
-            <path d="m16.24 16.24 2.12 2.12"></path>
-            <path d="m18.36 5.64-2.12 2.12"></path>
-            <path d="m7.76 16.24-2.12 2.12"></path>
-            <circle cx="12" cy="12" r="4"></circle>
-          </svg>
-          Preparing for launch
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU=" alt="Winds Accounting 26 Logo">
+            <div class="brand-text">Winds Accounting 26<br><small style="font-size:10px; opacity:0.7; font-weight:normal;">v1.03</small></div>
         </div>
-      </div>
+        <nav class="nav-menu">
+            <a class="nav-item active" data-target="view-dashboard">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                Dashboard
+            </a>
+            <a class="nav-item" data-target="view-ledgers">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+                Accounts
+            </a>
+            <a class="nav-item" data-target="view-vouchers">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Voucher Entry
+            </a>
+            <a class="nav-item" data-target="view-daybook">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Day Book
+            </a>
+            <a class="nav-item" data-target="view-reports">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Financial Reports
+            </a>
+            <a class="nav-item" data-target="view-settings">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Administration
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div>Created by</div>
+            <a href="https://novussolutions.vercel.app/" target="_blank">
+                <img src="https://i.postimg.cc/yNNSympY/image.png" alt="Novus Solutions">
+            </a>
+        </div>
     </aside>
-  </main>
 
-  <footer>
-    <span class="footer-brand">Winds Accounting 26</span>
-    <span>© <span id="year">2026</span> Winds Accounting 26. All rights reserved.</span>
-  </footer>
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="company-selector">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <select id="global-company-select" onchange="App.switchCompany(this.value)">
+                    <!-- Populated by JS -->
+                </select>
+                <button class="btn-secondary" onclick="App.openModal('company-modal')" title="Manage Companies">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </div>
+            <div id="financial-year-display" style="font-weight: bold; color: var(--text-muted);">
+                FY: --
+            </div>
+        </header>
 
-  <script>
-    // Keep the copyright year current without requiring another file.
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+        <section class="content-area">
+            
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section active">
+                <h1>Business Dashboard</h1>
+                <div class="grid-cards">
+                    <div class="card">
+                        <div class="card-title">Total Receipts (FY)</div>
+                        <div class="card-value text-success" id="dash-receipts">₹0.00</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Total Payments (FY)</div>
+                        <div class="card-value text-danger" id="dash-payments">₹0.00</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Cash & Bank Balance</div>
+                        <div class="card-value text-primary" id="dash-cash">₹0.00</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Vouchers Posted</div>
+                        <div class="card-value text-primary" id="dash-vouchers">0</div>
+                    </div>
+                </div>
+                
+                <h2>Recent Activity</h2>
+                <div class="table-container">
+                    <table id="dash-recent-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Voucher No</th>
+                                <th>Type</th>
+                                <th>Particulars</th>
+                                <th class="num-cell">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: ACCOUNTS (LEDGERS) -->
+            <div id="view-ledgers" class="view-section">
+                <div class="flex-between mb-4">
+                    <h1>Accounts</h1>
+                    <button class="btn-primary" onclick="App.openLedgerModal()">
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Create Account
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="ledgers-table">
+                        <thead>
+                            <tr>
+                                <th>Account Name</th>
+                                <th>Account Group</th>
+                                <th class="num-cell">Opening Balance</th>
+                                <th class="num-cell">Closing Balance</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: VOUCHER ENTRY -->
+            <div id="view-vouchers" class="view-section">
+                <h1>Voucher Entry</h1>
+                <form id="voucher-form" onsubmit="App.saveVoucher(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Voucher Type</label>
+                            <select id="v-type" required>
+                                <option value="Journal">Journal</option>
+                                <option value="Receipt">Receipt</option>
+                                <option value="Payment">Payment</option>
+                                <option value="Contra">Contra</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Purchase">Purchase</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Voucher Number</label>
+                            <input type="text" id="v-no" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="v-date" required>
+                        </div>
+                    </div>
+                    
+                    <table class="voucher-grid" id="voucher-lines-table">
+                        <thead>
+                            <tr>
+                                <th width="12%">Dr/Cr</th>
+                                <th width="48%">Particulars (Account)</th>
+                                <th width="15%" class="num-cell">Debit (₹)</th>
+                                <th width="15%" class="num-cell">Credit (₹)</th>
+                                <th width="10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="voucher-lines-body">
+                            <!-- Rows added dynamically -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" class="text-right" style="font-weight:bold; padding-right:16px;">Total</td>
+                                <td class="num-cell" id="v-total-dr" style="font-weight:bold; background:#f8fafc;">0.00</td>
+                                <td class="num-cell" id="v-total-cr" style="font-weight:bold; background:#f8fafc;">0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div class="mt-4 flex-between">
+                        <button type="button" class="btn-secondary" onclick="App.addVoucherLine()">
+                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Add Row
+                        </button>
+                        <div class="form-group" style="width: 400px;">
+                            <label>Narration</label>
+                            <textarea id="v-narration" rows="2" placeholder="Being..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="App.resetVoucherForm()">Clear</button>
+                        <button type="submit" class="btn-primary">
+                            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                            Save & Post Voucher
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- VIEW: DAY BOOK -->
+            <div id="view-daybook" class="view-section">
+                <div class="flex-between mb-4">
+                    <h1>Day Book</h1>
+                    <div class="flex">
+                        <input type="date" id="daybook-from">
+                        <input type="date" id="daybook-to">
+                        <button class="btn-secondary" onclick="App.executeWithLoader(() => App.loadDaybook())">Filter</button>
+                        <button class="btn-secondary" onclick="window.print()">
+                            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Print
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="daybook-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Voucher No</th>
+                                <th>Particulars</th>
+                                <th class="num-cell">Debit</th>
+                                <th class="num-cell">Credit</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: REPORTS -->
+            <div id="view-reports" class="view-section">
+                <div class="flex-between mb-4">
+                    <h1>Financial Reports</h1>
+                    <div class="flex">
+                        <select id="report-type" onchange="App.executeWithLoader(() => App.generateReport())">
+                            <option value="trial_balance">Trial Balance</option>
+                            <option value="pnl">Profit & Loss A/c</option>
+                            <option value="balance_sheet">Balance Sheet</option>
+                        </select>
+                        <button class="btn-secondary" onclick="window.print()">Print</button>
+                    </div>
+                </div>
+                <div class="table-container" id="report-container">
+                    <!-- Dynamic Report Content -->
+                </div>
+            </div>
+
+            <!-- VIEW: SETTINGS -->
+            <div id="view-settings" class="view-section">
+                <h1>Administration & Data Management</h1>
+                
+                <div class="card mb-4" id="edit-company-card" style="display:none;">
+                    <h2>Company Settings</h2>
+                    <p class="mb-4" style="color:var(--text-muted); font-size:13px;">Update the details of the currently selected company.</p>
+                    <form onsubmit="App.updateCurrentCompany(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" id="edit-comp-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>GSTIN</label>
+                                <input type="text" id="edit-comp-gstin">
+                            </div>
+                            <div class="form-group">
+                                <label>Financial Year Start</label>
+                                <input type="date" id="edit-comp-fystart" required onchange="App.autoAdjustEndDate('edit-comp-fystart', 'edit-comp-fyend')">
+                            </div>
+                            <div class="form-group">
+                                <label>Financial Year End</label>
+                                <input type="date" id="edit-comp-fyend" required readonly style="background-color: var(--bg-light);">
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top: 16px;">
+                            <button type="submit" class="btn-primary">
+                                <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="grid-cards">
+                    <div class="card">
+                        <h2>Data Backup</h2>
+                        <p class="mb-4" style="color:var(--text-muted); font-size:13px;">Export all company records to a JSON file. This is crucial as browser storage can be cleared.</p>
+                        <button class="btn-primary" onclick="App.exportBackup()">
+                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Download Full Backup
+                        </button>
+                    </div>
+                    <div class="card">
+                        <h2>Data Restore</h2>
+                        <p class="mb-4" style="color:var(--text-muted); font-size:13px;">Restore previously exported JSON backup. Warning: This will merge or overwrite existing data.</p>
+                        <input type="file" id="backup-file" accept=".json" style="display:none;" onchange="App.importBackup(event)">
+                        <button class="btn-secondary" onclick="document.getElementById('backup-file').click()">
+                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Select Backup File
+                        </button>
+                    </div>
+                </div>
+                <div class="card" style="border-color: var(--danger);">
+                    <h2 class="text-danger">Danger Zone</h2>
+                    <p class="mb-4" style="color:var(--text-muted); font-size:13px;">Permanently delete the currently selected company and all its accounting records. This action cannot be undone.</p>
+                    <button class="btn-danger" onclick="App.confirmDeleteCompany()">
+                        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        Delete Current Company
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Modal: Company Form -->
+    <div class="modal-overlay" id="company-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Company</h2>
+                <button class="modal-close" onclick="App.closeModal('company-modal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <form onsubmit="App.saveCompany(event)">
+                <div class="form-group mb-4">
+                    <label>Company Name</label>
+                    <input type="text" id="comp-name" required placeholder="e.g. Winds Enterprises">
+                </div>
+                <div class="form-group mb-4">
+                    <label>Financial Year Start</label>
+                    <input type="date" id="comp-fystart" required onchange="App.autoAdjustEndDate('comp-fystart', 'comp-fyend')">
+                </div>
+                <div class="form-group mb-4">
+                    <label>Financial Year End</label>
+                    <input type="date" id="comp-fyend" required readonly style="background-color: var(--bg-light);">
+                </div>
+                <div class="form-group mb-4">
+                    <label>GSTIN (Optional)</label>
+                    <input type="text" id="comp-gstin" placeholder="27XXXXX0000X1Z5">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Company</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Ledger Form -->
+    <div class="modal-overlay" id="ledger-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="ledger-modal-title">Create Account</h2>
+                <button class="modal-close" onclick="App.closeModal('ledger-modal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <form onsubmit="App.saveLedger(event)" id="ledger-form">
+                <input type="hidden" id="ledg-id">
+                <div class="form-group mb-4">
+                    <label>Account Name</label>
+                    <input type="text" id="ledg-name" required>
+                </div>
+                <div class="form-group mb-4">
+                    <label>Account Group</label>
+                    <select id="ledg-group" required>
+                        <option value="Capital Account">Capital Account</option>
+                        <option value="Current Assets">Current Assets (Cash, Bank, Debtors)</option>
+                        <option value="Fixed Assets">Fixed Assets</option>
+                        <option value="Current Liabilities">Current Liabilities (Creditors, Duties)</option>
+                        <option value="Loans (Liability)">Loans (Liability)</option>
+                        <option value="Sales Accounts">Sales Accounts</option>
+                        <option value="Purchase Accounts">Purchase Accounts</option>
+                        <option value="Direct Expenses">Direct Expenses</option>
+                        <option value="Indirect Expenses">Indirect Expenses</option>
+                        <option value="Direct Incomes">Direct Incomes</option>
+                        <option value="Indirect Incomes">Indirect Incomes</option>
+                    </select>
+                </div>
+                <div class="form-group mb-4 flex">
+                    <div style="flex:1;">
+                        <label>Opening Balance</label>
+                        <input type="text" id="ledg-opbal" class="money-input" value="0.00" oninput="App.formatCurrencyInput(this)" onblur="App.formatCurrencyBlur(this)">
+                    </div>
+                    <div style="width:100px;">
+                        <label>Dr/Cr</label>
+                        <select id="ledg-type">
+                            <option value="Dr">Dr</option>
+                            <option value="Cr">Cr</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Custom Confirm Dialog -->
+    <div class="modal-overlay" id="confirm-modal" style="z-index: 10001;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div style="color: var(--warning); margin-bottom: 16px;">
+                <svg viewBox="0 0 24 24" style="width: 48px; height: 48px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <h2 id="confirm-msg" style="margin-bottom: 24px;">Are you sure?</h2>
+            <div class="form-actions" style="justify-content: center; margin-top: 0;">
+                <button type="button" class="btn-secondary" onclick="InternalUI.closeConfirm()">Cancel</button>
+                <button type="button" class="btn-danger" id="confirm-yes">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal: Custom Alert Dialog -->
+    <div class="modal-overlay" id="alert-modal" style="z-index: 10001;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h2 id="alert-msg" style="margin-bottom: 24px;">Alert</h2>
+            <div class="form-actions" style="justify-content: center; margin-top: 0;">
+                <button type="button" class="btn-primary" onclick="InternalUI.closeAlert()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * Winds Accounting 26 Core Engine
+         * Built with Vanilla JS & IndexedDB
+         */
+
+        // Context Menu Restrictions
+        document.addEventListener('contextmenu', (e) => {
+            if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                e.preventDefault();
+            }
+        });
+
+        // Internal Custom UI elements to replace native window.alert and window.confirm
+        const InternalUI = {
+            confirm: (msg, onYes) => {
+                document.getElementById('confirm-msg').textContent = msg;
+                document.getElementById('confirm-modal').classList.add('active');
+                document.getElementById('confirm-yes').onclick = () => {
+                    InternalUI.closeConfirm();
+                    onYes();
+                };
+            },
+            closeConfirm: () => {
+                document.getElementById('confirm-modal').classList.remove('active');
+            },
+            alert: (msg) => {
+                document.getElementById('alert-msg').textContent = msg;
+                document.getElementById('alert-modal').classList.add('active');
+            },
+            closeAlert: () => {
+                document.getElementById('alert-modal').classList.remove('active');
+            },
+            toast: (msg, type = 'success') => {
+                const container = document.getElementById('toast-container');
+                const t = document.createElement('div');
+                t.className = `toast ${type}`;
+                t.textContent = msg;
+                container.appendChild(t);
+                setTimeout(() => {
+                    t.style.opacity = '0';
+                    setTimeout(() => t.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Utility: Formatting
+        const Format = {
+            currency: (amount) => {
+                const val = parseFloat(amount) || 0;
+                // Strict Indian Format
+                return new Intl.NumberFormat('en-IN', { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2 
+                }).format(val);
+            },
+            date: (dateStr) => {
+                if (!dateStr) return '';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            },
+            generateId: () => crypto.randomUUID(),
+            parseAmount: (str) => {
+                if(!str) return 0;
+                if (typeof str === 'number') return str;
+                return parseFloat(str.replace(/,/g, '')) || 0;
+            }
+        };
+
+        // IndexedDB Wrapper
+        const DB = {
+            name: 'WindsAccountingDB',
+            version: 1,
+            db: null,
+
+            init: () => {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(DB.name, DB.version);
+                    req.onerror = e => reject(e.target.error);
+                    req.onsuccess = e => { DB.db = e.target.result; resolve(); };
+                    req.onupgradeneeded = e => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('companies')) db.createObjectStore('companies', { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains('ledgers')) {
+                            const ls = db.createObjectStore('ledgers', { keyPath: 'id' });
+                            ls.createIndex('companyId', 'companyId', { unique: false });
+                        }
+                        if (!db.objectStoreNames.contains('vouchers')) {
+                            const vs = db.createObjectStore('vouchers', { keyPath: 'id' });
+                            vs.createIndex('companyId', 'companyId', { unique: false });
+                            vs.createIndex('date', 'date', { unique: false });
+                        }
+                        if (!db.objectStoreNames.contains('voucher_lines')) {
+                            const vls = db.createObjectStore('voucher_lines', { keyPath: 'id' });
+                            vls.createIndex('voucherId', 'voucherId', { unique: false });
+                            vls.createIndex('ledgerId', 'ledgerId', { unique: false });
+                        }
+                    };
+                });
+            },
+
+            getAll: (storeName, indexName = null, indexValue = null) => {
+                return new Promise((resolve, reject) => {
+                    if (!DB.db) return resolve([]);
+                    const tx = DB.db.transaction(storeName, 'readonly');
+                    const store = tx.objectStore(storeName);
+                    let req;
+                    if (indexName && indexValue) req = store.index(indexName).getAll(indexValue);
+                    else req = store.getAll();
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            },
+            put: (storeName, data) => {
+                return new Promise((resolve, reject) => {
+                    const tx = DB.db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    const req = store.put(data);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            },
+            delete: (storeName, key) => {
+                return new Promise((resolve, reject) => {
+                    const tx = DB.db.transaction(storeName, 'readwrite');
+                    tx.objectStore(storeName).delete(key);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            },
+            saveVoucherTx: (voucher, lines) => {
+                return new Promise((resolve, reject) => {
+                    const tx = DB.db.transaction(['vouchers', 'voucher_lines'], 'readwrite');
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = e => reject(e.target.error);
+                    
+                    const vStore = tx.objectStore('vouchers');
+                    const lStore = tx.objectStore('voucher_lines');
+                    
+                    vStore.put(voucher);
+                    lines.forEach(line => lStore.put(line));
+                });
+            }
+        };
+
+        // Application State
+        const State = {
+            currentCompanyId: null,
+            companies: [],
+            ledgers: []
+        };
+
+        // Application Logic & UI Binding
+        const App = {
+            
+            showLoader: (duration = 300) => {
+                return new Promise((resolve) => {
+                    const loader = document.getElementById('loading-screen');
+                    loader.style.display = 'flex';
+                    loader.style.opacity = '1';
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                            resolve();
+                        }, 300);
+                    }, duration);
+                });
+            },
+
+            executeWithLoader: async (fn, duration = 300) => {
+                await App.showLoader(duration);
+                return await fn();
+            },
+
+            init: async () => {
+                await App.showLoader(300);
+                try {
+                    await DB.init();
+                    await App.loadCompanies();
+                    
+                    // Setup Navigation
+                    document.querySelectorAll('.nav-item').forEach(el => {
+                        el.addEventListener('click', (e) => {
+                            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                            e.currentTarget.classList.add('active');
+                            const target = e.currentTarget.getAttribute('data-target');
+                            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+                            document.getElementById(target).classList.add('active');
+                            App.onViewLoad(target);
+                        });
+                    });
+
+                    // Set today's date defaults
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('v-date').value = today;
+                    
+                    // Setup external combo closing
+                    document.addEventListener('click', (e) => {
+                        if(!e.target.closest('.combo-container')) {
+                            document.querySelectorAll('.combo-list').forEach(l => l.style.display = 'none');
+                        }
+                    });
+
+                } catch (e) {
+                    console.error(e);
+                    InternalUI.toast('Failed to initialize database.', 'error');
+                }
+            },
+
+            onViewLoad: (viewId) => {
+                if (!State.currentCompanyId && viewId !== 'view-settings') {
+                    InternalUI.toast('Please create or select a company first.', 'warning');
+                    App.openModal('company-modal');
+                    return;
+                }
+                
+                App.executeWithLoader(() => {
+                    if (viewId === 'view-dashboard') App.loadDashboard();
+                    if (viewId === 'view-ledgers') App.loadLedgersTable();
+                    if (viewId === 'view-vouchers') { App.resetVoucherForm(); }
+                    if (viewId === 'view-daybook') App.setupDaybookDates();
+                    if (viewId === 'view-reports') App.generateReport();
+                    if (viewId === 'view-settings') App.loadCompanySettings();
+                }, 300);
+            },
+
+            // Format Currency Inputs (Indian System)
+            formatCurrencyInput: (input) => {
+                let val = input.value.replace(/[^0-9.]/g, '');
+                if (val === '') {
+                    input.value = '';
+                    return;
+                }
+                let parts = val.split('.');
+                let integerPart = parts[0];
+                let decimalPart = parts.length > 1 ? '.' + parts[1].substring(0, 2) : '';
+                
+                if (integerPart) {
+                    let lastThree = integerPart.substring(integerPart.length - 3);
+                    let otherNumbers = integerPart.substring(0, integerPart.length - 3);
+                    if (otherNumbers != '') {
+                        lastThree = ',' + lastThree;
+                    }
+                    integerPart = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+                }
+                input.value = integerPart + decimalPart;
+            },
+            
+            formatCurrencyBlur: (input) => {
+                let num = Format.parseAmount(input.value);
+                if(isNaN(num)) num = 0;
+                input.value = Format.currency(num);
+                App.calculateVoucherTotals();
+            },
+
+            // Modal Controls
+            openModal: id => document.getElementById(id).classList.add('active'),
+            closeModal: id => document.getElementById(id).classList.remove('active'),
+
+            autoAdjustEndDate: (startId, endId) => {
+                const startVal = document.getElementById(startId).value;
+                if(!startVal) return;
+                const d = new Date(startVal);
+                d.setFullYear(d.getFullYear() + 1);
+                d.setDate(d.getDate() - 1);
+                document.getElementById(endId).value = d.toISOString().split('T')[0];
+            },
+
+            // Company Management
+            loadCompanies: async () => {
+                State.companies = await DB.getAll('companies');
+                const select = document.getElementById('global-company-select');
+                select.innerHTML = '<option value="">Select Company</option>';
+                
+                State.companies.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    select.appendChild(opt);
+                });
+
+                const savedId = localStorage.getItem('lastCompanyId');
+                if (savedId && State.companies.find(c => c.id === savedId)) {
+                    select.value = savedId;
+                    await App.switchCompany(savedId);
+                } else if (State.companies.length === 0) {
+                    // Pre-fill smart date for new
+                    const defaultStart = `${new Date().getFullYear()}-04-01`;
+                    document.getElementById('comp-fystart').value = defaultStart;
+                    App.autoAdjustEndDate('comp-fystart', 'comp-fyend');
+                    App.openModal('company-modal');
+                }
+            },
+
+            switchCompany: async (id) => {
+                if (!id) return;
+                State.currentCompanyId = id;
+                localStorage.setItem('lastCompanyId', id);
+                const comp = State.companies.find(c => c.id === id);
+                
+                document.getElementById('financial-year-display').textContent = `FY: ${Format.date(comp.fyStart)} - ${Format.date(comp.fyEnd)}`;
+                await App.loadLedgers();
+                
+                const activeNav = document.querySelector('.nav-item.active');
+                if(activeNav) App.onViewLoad(activeNav.getAttribute('data-target'));
+                
+                InternalUI.toast(`Switched to ${comp.name}`);
+            },
+
+            saveCompany: async (e) => {
+                e.preventDefault();
+                await App.showLoader(3000); // 3 seconds loading for company creation
+                
+                const id = Format.generateId();
+                const comp = {
+                    id: id,
+                    name: document.getElementById('comp-name').value,
+                    fyStart: document.getElementById('comp-fystart').value,
+                    fyEnd: document.getElementById('comp-fyend').value,
+                    gstin: document.getElementById('comp-gstin').value
+                };
+                
+                await DB.put('companies', comp);
+                
+                // Create Default Ledgers
+                const defaultLedgers = [
+                    { id: Format.generateId(), companyId: id, name: 'Cash', group: 'Current Assets', opBal: 0, type: 'Dr' },
+                    { id: Format.generateId(), companyId: id, name: 'Sales Account', group: 'Sales Accounts', opBal: 0, type: 'Cr' },
+                    { id: Format.generateId(), companyId: id, name: 'Purchase Account', group: 'Purchase Accounts', opBal: 0, type: 'Dr' },
+                    { id: Format.generateId(), companyId: id, name: 'Capital Account', group: 'Capital Account', opBal: 0, type: 'Cr' }
+                ];
+                for (let l of defaultLedgers) await DB.put('ledgers', l);
+
+                App.closeModal('company-modal');
+                InternalUI.toast('Company created successfully');
+                await App.loadCompanies();
+                document.getElementById('global-company-select').value = id;
+                await App.switchCompany(id);
+            },
+
+            loadCompanySettings: () => {
+                const card = document.getElementById('edit-company-card');
+                if (!State.currentCompanyId) {
+                    card.style.display = 'none';
+                    return;
+                }
+                const comp = State.companies.find(c => c.id === State.currentCompanyId);
+                if (comp) {
+                    card.style.display = 'block';
+                    document.getElementById('edit-comp-name').value = comp.name;
+                    document.getElementById('edit-comp-gstin').value = comp.gstin || '';
+                    document.getElementById('edit-comp-fystart').value = comp.fyStart;
+                    document.getElementById('edit-comp-fyend').value = comp.fyEnd;
+                }
+            },
+
+            updateCurrentCompany: async (e) => {
+                e.preventDefault();
+                if (!State.currentCompanyId) return;
+                
+                await App.showLoader(300);
+                const compIndex = State.companies.findIndex(c => c.id === State.currentCompanyId);
+                if (compIndex === -1) return;
+
+                const comp = State.companies[compIndex];
+                comp.name = document.getElementById('edit-comp-name').value;
+                comp.gstin = document.getElementById('edit-comp-gstin').value;
+                comp.fyStart = document.getElementById('edit-comp-fystart').value;
+                comp.fyEnd = document.getElementById('edit-comp-fyend').value;
+
+                await DB.put('companies', comp);
+                
+                const select = document.getElementById('global-company-select');
+                const opt = select.querySelector(`option[value="${comp.id}"]`);
+                if(opt) opt.textContent = comp.name;
+                document.getElementById('financial-year-display').textContent = `FY: ${Format.date(comp.fyStart)} - ${Format.date(comp.fyEnd)}`;
+
+                InternalUI.toast('Company details updated');
+            },
+
+            confirmDeleteCompany: () => {
+                if (!State.currentCompanyId) return;
+                InternalUI.confirm("This will delete the company and ALL its accounting records. This cannot be undone. Proceed?", async () => {
+                    await App.showLoader(3000); // 3 sec delay
+                    
+                    const ledgers = await DB.getAll('ledgers', 'companyId', State.currentCompanyId);
+                    for(let l of ledgers) await DB.delete('ledgers', l.id);
+                    
+                    const vouchers = await DB.getAll('vouchers', 'companyId', State.currentCompanyId);
+                    for(let v of vouchers) {
+                        const lines = await DB.getAll('voucher_lines', 'voucherId', v.id);
+                        for(let line of lines) await DB.delete('voucher_lines', line.id);
+                        await DB.delete('vouchers', v.id);
+                    }
+                    
+                    await DB.delete('companies', State.currentCompanyId);
+                    State.currentCompanyId = null;
+                    localStorage.removeItem('lastCompanyId');
+                    InternalUI.toast('Company deleted', 'warning');
+                    setTimeout(()=> location.reload(), 1000);
+                });
+            },
+
+            // Ledger Management
+            loadLedgers: async () => {
+                if (!State.currentCompanyId) return;
+                State.ledgers = await DB.getAll('ledgers', 'companyId', State.currentCompanyId);
+                State.ledgers.sort((a,b) => a.name.localeCompare(b.name));
+            },
+
+            openLedgerModal: (id = null) => {
+                const form = document.getElementById('ledger-form');
+                form.reset();
+                document.getElementById('ledger-modal-title').textContent = id ? "Edit Account" : "Create Account";
+                
+                if (id) {
+                    const l = State.ledgers.find(x => x.id === id);
+                    if(l) {
+                        document.getElementById('ledg-id').value = l.id;
+                        document.getElementById('ledg-name').value = l.name;
+                        document.getElementById('ledg-group').value = l.group;
+                        document.getElementById('ledg-opbal').value = Format.currency(l.opBal);
+                        document.getElementById('ledg-type').value = l.type;
+                    }
+                } else {
+                    document.getElementById('ledg-id').value = "";
+                    document.getElementById('ledg-opbal').value = "0.00";
+                }
+                App.openModal('ledger-modal');
+            },
+
+            saveLedger: async (e) => {
+                e.preventDefault();
+                if (!State.currentCompanyId) return InternalUI.toast('No company selected', 'error');
+                
+                const id = document.getElementById('ledg-id').value;
+                const name = document.getElementById('ledg-name').value.trim();
+                
+                // Duplicate check
+                const exists = State.ledgers.find(l => l.name.toLowerCase() === name.toLowerCase() && l.id !== id);
+                if (exists) return InternalUI.toast('Account name already exists', 'error');
+
+                await App.showLoader(300);
+
+                const ledger = {
+                    id: id || Format.generateId(),
+                    companyId: State.currentCompanyId,
+                    name: name,
+                    group: document.getElementById('ledg-group').value,
+                    opBal: Format.parseAmount(document.getElementById('ledg-opbal').value),
+                    type: document.getElementById('ledg-type').value
+                };
+                
+                await DB.put('ledgers', ledger);
+                App.closeModal('ledger-modal');
+                InternalUI.toast(id ? 'Account updated' : 'Account created');
+                await App.loadLedgers();
+                App.loadLedgersTable();
+            },
+
+            confirmDeleteLedger: (id) => {
+                InternalUI.confirm("Are you sure you want to delete this account?", async () => {
+                    // check for transactions
+                    const lines = await DB.getAll('voucher_lines', 'ledgerId', id);
+                    if(lines.length > 0) {
+                        InternalUI.alert("Cannot delete account. It has associated transactions.");
+                        return;
+                    }
+                    await App.showLoader(300);
+                    await DB.delete('ledgers', id);
+                    InternalUI.toast("Account deleted successfully");
+                    await App.loadLedgers();
+                    App.loadLedgersTable();
+                });
+            },
+
+            loadLedgersTable: async () => {
+                const tbody = document.querySelector('#ledgers-table tbody');
+                tbody.innerHTML = '';
+                if(State.ledgers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No accounts found.</td></tr>';
+                    return;
+                }
+
+                const balances = await App.calculateBalances();
+
+                State.ledgers.forEach(l => {
+                    const tr = document.createElement('tr');
+                    const cb = balances[l.id] || { balance: l.opBal, type: l.type };
+                    tr.innerHTML = `
+                        <td>${l.name}</td>
+                        <td>${l.group}</td>
+                        <td class="num-cell">₹${Format.currency(l.opBal)} ${l.opBal > 0 ? l.type : ''}</td>
+                        <td class="num-cell" style="font-weight:bold;">₹${Format.currency(cb.balance)} ${cb.balance > 0 ? cb.type : ''}</td>
+                        <td class="text-center">
+                            <button class="btn-icon" onclick="App.openLedgerModal('${l.id}')" title="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                            <button class="btn-icon danger" onclick="App.confirmDeleteLedger('${l.id}')" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            },
+
+            getAccountNature: (group) => {
+                const drGroups = ['Current Assets', 'Fixed Assets', 'Purchase Accounts', 'Direct Expenses', 'Indirect Expenses'];
+                const crGroups = ['Capital Account', 'Current Liabilities', 'Loans (Liability)', 'Sales Accounts', 'Direct Incomes', 'Indirect Incomes'];
+                if (drGroups.includes(group)) return 'Dr';
+                if (crGroups.includes(group)) return 'Cr';
+                return 'Dr'; // Fallback
+            },
+
+            calculateBalances: async () => {
+                const balances = {};
+                State.ledgers.forEach(l => {
+                    const nature = App.getAccountNature(l.group);
+                    let internalBal = 0; 
+                    if (l.opBal > 0) {
+                        internalBal = (l.type === nature) ? l.opBal : -l.opBal;
+                    }
+                    balances[l.id] = { val: internalBal, nature: nature };
+                });
+
+                const vouchers = await DB.getAll('vouchers', 'companyId', State.currentCompanyId);
+                for (let v of vouchers) {
+                    const lines = await DB.getAll('voucher_lines', 'voucherId', v.id);
+                    lines.forEach(line => {
+                        if (!balances[line.ledgerId]) return;
+                        const b = balances[line.ledgerId];
+                        const amount = parseFloat(line.amount);
+                        if (line.dc === b.nature) {
+                            b.val += amount;
+                        } else {
+                            b.val -= amount;
+                        }
+                    });
+                }
+
+                const result = {};
+                for (const [id, data] of Object.entries(balances)) {
+                    let finalType = data.nature;
+                    let finalVal = data.val;
+                    if (finalVal < 0) {
+                        finalVal = Math.abs(finalVal);
+                        finalType = (data.nature === 'Dr') ? 'Cr' : 'Dr';
+                    }
+                    result[id] = { balance: finalVal, type: finalType };
+                }
+                return result;
+            },
+
+            // Combo Box Integration for Vouchers
+            setupComboBox: (inputEl) => {
+                const container = inputEl.closest('.combo-container');
+                const list = container.querySelector('.combo-list');
+                const hiddenVal = container.querySelector('.v-ledger-select');
+                let currentFocus = -1;
+
+                const renderList = (filter = "") => {
+                    list.innerHTML = "";
+                    const filtered = State.ledgers.filter(l => l.name.toLowerCase().includes(filter.toLowerCase()));
+                    if(filtered.length === 0) {
+                        list.innerHTML = '<div class="combo-list-item text-muted">No accounts found</div>';
+                    } else {
+                        filtered.forEach((l, index) => {
+                            const div = document.createElement('div');
+                            div.className = "combo-list-item";
+                            div.textContent = l.name;
+                            div.dataset.id = l.id;
+                            div.addEventListener('mousedown', (e) => { // mousedown fires before input blur
+                                e.preventDefault();
+                                inputEl.value = l.name;
+                                hiddenVal.value = l.id;
+                                list.style.display = 'none';
+                            });
+                            list.appendChild(div);
+                        });
+                    }
+                };
+
+                inputEl.addEventListener('focus', () => {
+                    currentFocus = -1;
+                    renderList(inputEl.value);
+                    list.style.display = 'block';
+                });
+
+                inputEl.addEventListener('input', (e) => {
+                    hiddenVal.value = ""; // clear hidden if typing
+                    currentFocus = -1;
+                    renderList(e.target.value);
+                });
+
+                inputEl.addEventListener('keydown', (e) => {
+                    let items = list.querySelectorAll('.combo-list-item[data-id]');
+                    if (e.key === "ArrowDown") {
+                        currentFocus++;
+                        addActive(items);
+                    } else if (e.key === "ArrowUp") {
+                        currentFocus--;
+                        addActive(items);
+                    } else if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (currentFocus > -1 && items[currentFocus]) {
+                            items[currentFocus].dispatchEvent(new MouseEvent('mousedown'));
+                        }
+                    }
+                });
+
+                const addActive = (x) => {
+                    if (!x || x.length === 0) return false;
+                    x.forEach(i => i.classList.remove('selected'));
+                    if (currentFocus >= x.length) currentFocus = 0;
+                    if (currentFocus < 0) currentFocus = (x.length - 1);
+                    x[currentFocus].classList.add('selected');
+                    x[currentFocus].scrollIntoView({block: "nearest"});
+                };
+            },
+
+            // Voucher Entry
+            resetVoucherForm: () => {
+                document.getElementById('v-no').value = 'V-' + Math.floor(Math.random()*10000);
+                document.getElementById('v-narration').value = '';
+                document.getElementById('voucher-lines-body').innerHTML = '';
+                App.addVoucherLine('Dr');
+                App.addVoucherLine('Cr');
+                App.calculateVoucherTotals();
+            },
+
+            addVoucherLine: (defaultDc = 'Dr') => {
+                const tbody = document.getElementById('voucher-lines-body');
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>
+                        <select class="v-dc" onchange="App.handleDcChange(this)">
+                            <option value="Dr" ${defaultDc==='Dr'?'selected':''}>Dr</option>
+                            <option value="Cr" ${defaultDc==='Cr'?'selected':''}>Cr</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="combo-container">
+                            <input type="text" class="combo-input" placeholder="Type to search account..." autocomplete="off">
+                            <input type="hidden" class="v-ledger-select" required>
+                            <div class="combo-list"></div>
+                        </div>
+                    </td>
+                    <td><input type="text" class="v-amt v-amt-dr money-input" value="" oninput="App.formatCurrencyInput(this)" onblur="App.formatCurrencyBlur(this)" ${defaultDc==='Cr'?'disabled':''}></td>
+                    <td><input type="text" class="v-amt v-amt-cr money-input" value="" oninput="App.formatCurrencyInput(this)" onblur="App.formatCurrencyBlur(this)" ${defaultDc==='Dr'?'disabled':''}></td>
+                    <td class="text-center"><button type="button" class="row-remove" onclick="this.closest('tr').remove(); App.calculateVoucherTotals();"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>
+                `;
+                tbody.appendChild(tr);
+                
+                // Initialize custom combo box on this row
+                App.setupComboBox(tr.querySelector('.combo-input'));
+            },
+
+            handleDcChange: (select) => {
+                const tr = select.closest('tr');
+                const drInp = tr.querySelector('.v-amt-dr');
+                const crInp = tr.querySelector('.v-amt-cr');
+                if(select.value === 'Dr') {
+                    drInp.disabled = false;
+                    crInp.disabled = true;
+                    crInp.value = '';
+                } else {
+                    crInp.disabled = false;
+                    drInp.disabled = true;
+                    drInp.value = '';
+                }
+                App.calculateVoucherTotals();
+            },
+
+            calculateVoucherTotals: () => {
+                let drTotal = 0, crTotal = 0;
+                document.querySelectorAll('#voucher-lines-body tr').forEach(tr => {
+                    const dc = tr.querySelector('.v-dc').value;
+                    if(dc === 'Dr') drTotal += Format.parseAmount(tr.querySelector('.v-amt-dr').value);
+                    else crTotal += Format.parseAmount(tr.querySelector('.v-amt-cr').value);
+                });
+                document.getElementById('v-total-dr').textContent = Format.currency(drTotal);
+                document.getElementById('v-total-cr').textContent = Format.currency(crTotal);
+                return { drTotal, crTotal };
+            },
+
+            saveVoucher: async (e) => {
+                e.preventDefault();
+                const totals = App.calculateVoucherTotals();
+                if (totals.drTotal === 0 || totals.crTotal === 0) return InternalUI.toast('Voucher amounts cannot be zero', 'error');
+                if (Math.abs(totals.drTotal - totals.crTotal) > 0.001) return InternalUI.toast('Voucher cannot be posted because debits and credits do not match.', 'error');
+                
+                const lines = [];
+                let valid = true;
+                document.querySelectorAll('#voucher-lines-body tr').forEach(tr => {
+                    const dc = tr.querySelector('.v-dc').value;
+                    const ledgerId = tr.querySelector('.v-ledger-select').value;
+                    const amtInp = dc === 'Dr' ? tr.querySelector('.v-amt-dr') : tr.querySelector('.v-amt-cr');
+                    const amt = Format.parseAmount(amtInp.value);
+                    
+                    if (!ledgerId) { valid = false; return InternalUI.toast('Please select valid accounts from the dropdown.', 'error'); }
+                    if (amt <= 0) { valid = false; return InternalUI.toast('Amount missing in a row', 'error'); }
+                    
+                    lines.push({
+                        id: Format.generateId(),
+                        ledgerId: ledgerId,
+                        dc: dc,
+                        amount: amt
+                    });
+                });
+                if(!valid) return;
+
+                await App.showLoader(300);
+
+                const vId = Format.generateId();
+                const voucher = {
+                    id: vId,
+                    companyId: State.currentCompanyId,
+                    type: document.getElementById('v-type').value,
+                    vNo: document.getElementById('v-no').value,
+                    date: document.getElementById('v-date').value,
+                    narration: document.getElementById('v-narration').value
+                };
+
+                lines.forEach(l => l.voucherId = vId);
+
+                try {
+                    await DB.saveVoucherTx(voucher, lines);
+                    InternalUI.toast('Voucher saved successfully');
+                    App.resetVoucherForm();
+                } catch(err) {
+                    console.error(err);
+                    InternalUI.toast('Error saving voucher', 'error');
+                }
+            },
+
+            confirmDeleteVoucher: (vId) => {
+                InternalUI.confirm("Are you sure you want to delete this voucher?", async () => {
+                    await App.showLoader(300);
+                    const lines = await DB.getAll('voucher_lines', 'voucherId', vId);
+                    for(let line of lines) await DB.delete('voucher_lines', line.id);
+                    await DB.delete('vouchers', vId);
+                    
+                    InternalUI.toast("Voucher deleted");
+                    App.loadDaybook();
+                });
+            },
+
+            // Daybook & Dashboard
+            setupDaybookDates: () => {
+                const comp = State.companies.find(c => c.id === State.currentCompanyId);
+                if(comp && comp.fyStart) {
+                    document.getElementById('daybook-from').value = comp.fyStart;
+                }
+                App.loadDaybook();
+            },
+
+            loadDaybook: async () => {
+                if(!State.currentCompanyId) return;
+                const from = document.getElementById('daybook-from').value;
+                const to = document.getElementById('daybook-to').value;
+                
+                const vouchers = await DB.getAll('vouchers', 'companyId', State.currentCompanyId);
+                let filtered = vouchers;
+                if(from) filtered = filtered.filter(v => v.date >= from);
+                if(to) filtered = filtered.filter(v => v.date <= to);
+                
+                filtered.sort((a,b) => a.date.localeCompare(b.date));
+                
+                const tbody = document.querySelector('#daybook-table tbody');
+                tbody.innerHTML = '';
+                
+                if(filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No records found for the selected period.</td></tr>';
+                    return;
+                }
+
+                for(let v of filtered) {
+                    const lines = await DB.getAll('voucher_lines', 'voucherId', v.id);
+                    let drText = '', crText = '', drTotal = 0, crTotal = 0;
+                    
+                    lines.forEach(l => {
+                        const ledger = State.ledgers.find(led => led.id === l.ledgerId);
+                        const lname = ledger ? ledger.name : 'Unknown';
+                        if(l.dc === 'Dr') {
+                            drText += `<div>${lname}</div>`;
+                            drTotal += l.amount;
+                        } else {
+                            crText += `<div>To ${lname}</div>`;
+                            crTotal += l.amount;
+                        }
+                    });
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${Format.date(v.date)}</td>
+                        <td>${v.type}</td>
+                        <td>${v.vNo}</td>
+                        <td>
+                            ${drText}
+                            ${crText}
+                            <div style="color:var(--text-muted); font-size:12px; margin-top:4px;">${v.narration}</div>
+                        </td>
+                        <td class="num-cell">₹${Format.currency(drTotal)}</td>
+                        <td class="num-cell">₹${Format.currency(crTotal)}</td>
+                        <td class="text-center">
+                            <button class="btn-icon danger" onclick="App.confirmDeleteVoucher('${v.id}')" title="Delete Voucher">
+                                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            },
+
+            loadDashboard: async () => {
+                if(!State.currentCompanyId) return;
+                const vouchers = await DB.getAll('vouchers', 'companyId', State.currentCompanyId);
+                document.getElementById('dash-vouchers').textContent = vouchers.length;
+
+                let receipts = 0, payments = 0;
+                for(let v of vouchers) {
+                    if(v.type === 'Receipt' || v.type === 'Sales') {
+                        const lines = await DB.getAll('voucher_lines', 'voucherId', v.id);
+                        lines.filter(l => l.dc==='Dr').forEach(l => receipts += l.amount);
+                    }
+                    if(v.type === 'Payment' || v.type === 'Purchase') {
+                        const lines = await DB.getAll('voucher_lines', 'voucherId', v.id);
+                        lines.filter(l => l.dc==='Cr').forEach(l => payments += l.amount);
+                    }
+                }
+                
+                document.getElementById('dash-receipts').textContent = `₹${Format.currency(receipts)}`;
+                document.getElementById('dash-payments').textContent = `₹${Format.currency(payments)}`;
+
+                const balances = await App.calculateBalances();
+                let cbBalance = 0;
+                State.ledgers.forEach(l => {
+                    if (l.group === 'Current Assets' && (l.name.toLowerCase().includes('cash') || l.name.toLowerCase().includes('bank'))) {
+                        const b = balances[l.id];
+                        if (b) cbBalance += (b.type === 'Dr' ? b.balance : -b.balance);
+                    }
+                });
+                document.getElementById('dash-cash').textContent = `₹${Format.currency(cbBalance)}`;
+
+                const recent = vouchers.sort((a,b) => b.date.localeCompare(a.date)).slice(0, 5);
+                const tbody = document.querySelector('#dash-recent-table tbody');
+                tbody.innerHTML = '';
+                if(recent.length === 0) tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No recent activity.</td></tr>';
+                
+                for(let v of recent) {
+                    const lines = await DB.getAll('voucher_lines', 'voucherId', v.id);
+                    const amt = lines.filter(l => l.dc === 'Dr').reduce((sum, l) => sum + l.amount, 0);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${Format.date(v.date)}</td>
+                        <td>${v.vNo}</td>
+                        <td>${v.type}</td>
+                        <td>${v.narration || '—'}</td>
+                        <td class="num-cell">₹${Format.currency(amt)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            },
+
+            // Reports Engine
+            generateReport: async () => {
+                if(!State.currentCompanyId) return;
+                const type = document.getElementById('report-type').value;
+                const container = document.getElementById('report-container');
+                container.innerHTML = '<div class="text-center" style="padding:20px;">Calculating...</div>';
+                
+                const balances = await App.calculateBalances();
+                
+                if (type === 'trial_balance') {
+                    let html = `<table><thead><tr><th>Particulars</th><th class="num-cell">Debit Balance</th><th class="num-cell">Credit Balance</th></tr></thead><tbody>`;
+                    let totDr = 0, totCr = 0;
+                    
+                    const grouped = {};
+                    State.ledgers.forEach(l => {
+                        const b = balances[l.id];
+                        if(b && b.balance !== 0) {
+                            if(!grouped[l.group]) grouped[l.group] = [];
+                            grouped[l.group].push({ name: l.name, ...b });
+                        }
+                    });
+
+                    for (const [group, leds] of Object.entries(grouped)) {
+                        html += `<tr><td colspan="3" style="font-weight:bold; background:#f1f5f9;">${group}</td></tr>`;
+                        leds.forEach(l => {
+                            if(l.type === 'Dr') {
+                                totDr += l.balance;
+                                html += `<tr><td style="padding-left:30px;">${l.name}</td><td class="num-cell">₹${Format.currency(l.balance)}</td><td></td></tr>`;
+                            } else {
+                                totCr += l.balance;
+                                html += `<tr><td style="padding-left:30px;">${l.name}</td><td></td><td class="num-cell">₹${Format.currency(l.balance)}</td></tr>`;
+                            }
+                        });
+                    }
+                    html += `</tbody><tfoot><tr>
+                        <td class="text-right" style="font-weight:bold;">Grand Total</td>
+                        <td class="num-cell" style="font-weight:bold; background:#f8fafc; border-top:2px solid var(--primary);">₹${Format.currency(totDr)}</td>
+                        <td class="num-cell" style="font-weight:bold; background:#f8fafc; border-top:2px solid var(--primary);">₹${Format.currency(totCr)}</td>
+                    </tr></tfoot></table>`;
+                    container.innerHTML = html;
+                } 
+                else if (type === 'pnl') {
+                    let directExp = 0, indirectExp = 0, directInc = 0, indirectInc = 0;
+                    let pnlHtml = `<table><thead><tr><th width="50%">Particulars</th><th class="num-cell">Amount</th></tr></thead><tbody>`;
+                    
+                    State.ledgers.forEach(l => {
+                        const b = balances[l.id];
+                        if(!b || b.balance === 0) return;
+                        if(l.group === 'Direct Expenses') directExp += b.balance;
+                        if(l.group === 'Indirect Expenses') indirectExp += b.balance;
+                        if(l.group === 'Sales Accounts' || l.group === 'Direct Incomes') directInc += b.balance;
+                        if(l.group === 'Indirect Incomes') indirectInc += b.balance;
+                    });
+
+                    const grossProfit = directInc - directExp;
+                    const netProfit = grossProfit + indirectInc - indirectExp;
+
+                    pnlHtml += `<tr><td style="font-weight:bold; background:#f1f5f9;" colspan="2">Trading Account</td></tr>`;
+                    pnlHtml += `<tr><td>Sales & Direct Incomes</td><td class="num-cell">₹${Format.currency(directInc)}</td></tr>`;
+                    pnlHtml += `<tr><td>Direct Expenses</td><td class="num-cell text-danger">(-) ₹${Format.currency(directExp)}</td></tr>`;
+                    pnlHtml += `<tr><td style="font-weight:bold;">Gross Profit / (Loss)</td><td class="num-cell" style="font-weight:bold; border-top:1px solid #000;">₹${Format.currency(grossProfit)}</td></tr>`;
+                    
+                    pnlHtml += `<tr><td style="font-weight:bold; background:#f1f5f9;" colspan="2">Profit & Loss Account</td></tr>`;
+                    pnlHtml += `<tr><td>Gross Profit Brought Down</td><td class="num-cell">₹${Format.currency(grossProfit)}</td></tr>`;
+                    pnlHtml += `<tr><td>Indirect Incomes</td><td class="num-cell">₹${Format.currency(indirectInc)}</td></tr>`;
+                    pnlHtml += `<tr><td>Indirect Expenses</td><td class="num-cell text-danger">(-) ₹${Format.currency(indirectExp)}</td></tr>`;
+                    pnlHtml += `<tr><td style="font-weight:bold;">Net Profit / (Loss)</td><td class="num-cell" style="font-weight:bold; border-top:2px solid var(--primary);">₹${Format.currency(netProfit)}</td></tr>`;
+                    pnlHtml += `</tbody></table>`;
+                    container.innerHTML = pnlHtml;
+                }
+                else if (type === 'balance_sheet') {
+                    let assets = 0, liab = 0, capital = 0;
+                    State.ledgers.forEach(l => {
+                        const b = balances[l.id];
+                        if(!b || b.balance === 0) return;
+                        if(l.group.includes('Assets')) assets += (b.type==='Dr'? b.balance : -b.balance);
+                        if(l.group.includes('Liabilities') || l.group.includes('Loans')) liab += (b.type==='Cr'? b.balance : -b.balance);
+                        if(l.group === 'Capital Account') capital += (b.type==='Cr'? b.balance : -b.balance);
+                    });
+
+                    let directExp = 0, indirectExp = 0, directInc = 0, indirectInc = 0;
+                    State.ledgers.forEach(l => {
+                        const b = balances[l.id];
+                        if(!b || b.balance === 0) return;
+                        if(l.group === 'Direct Expenses') directExp += b.balance;
+                        if(l.group === 'Indirect Expenses') indirectExp += b.balance;
+                        if(l.group === 'Sales Accounts' || l.group === 'Direct Incomes') directInc += b.balance;
+                        if(l.group === 'Indirect Incomes') indirectInc += b.balance;
+                    });
+                    const netProfit = (directInc - directExp) + indirectInc - indirectExp;
+                    capital += netProfit;
+
+                    let bsHtml = `<table><thead><tr><th width="50%">Liabilities & Capital</th><th class="num-cell">Amount</th><th width="50%">Assets</th><th class="num-cell">Amount</th></tr></thead><tbody>`;
+                    bsHtml += `<tr>
+                        <td>Capital Account<br><small style="color:var(--text-muted)">(Incl. Net Profit: ₹${Format.currency(netProfit)})</small></td>
+                        <td class="num-cell">₹${Format.currency(capital)}</td>
+                        <td>Current & Fixed Assets</td>
+                        <td class="num-cell">₹${Format.currency(assets)}</td>
+                    </tr>`;
+                    bsHtml += `<tr>
+                        <td>Current Liabilities & Loans</td>
+                        <td class="num-cell">₹${Format.currency(liab)}</td>
+                        <td></td><td></td>
+                    </tr>`;
+                    bsHtml += `</tbody><tfoot><tr>
+                        <td class="text-right" style="font-weight:bold;">Total</td>
+                        <td class="num-cell" style="font-weight:bold; border-top:2px solid var(--primary);">₹${Format.currency(capital + liab)}</td>
+                        <td class="text-right" style="font-weight:bold;">Total</td>
+                        <td class="num-cell" style="font-weight:bold; border-top:2px solid var(--primary);">₹${Format.currency(assets)}</td>
+                    </tr></tfoot></table>`;
+                    container.innerHTML = bsHtml;
+                }
+            },
+
+            // Backup & Restore
+            exportBackup: async () => {
+                try {
+                    const data = {
+                        version: '1.03',
+                        date: new Date().toISOString(),
+                        companies: await DB.getAll('companies'),
+                        ledgers: await DB.getAll('ledgers'),
+                        vouchers: await DB.getAll('vouchers'),
+                        voucher_lines: await DB.getAll('voucher_lines')
+                    };
+                    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `WindsAccounting26_Backup_${new Date().toISOString().split('T')[0]}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    InternalUI.toast('Backup created successfully');
+                } catch(e) {
+                    console.error(e);
+                    InternalUI.toast('Error creating backup', 'error');
+                }
+            },
+
+            importBackup: (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    await App.showLoader(500);
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!data.companies || !data.version) throw new Error("Invalid backup format");
+                        
+                        for(let c of data.companies) await DB.put('companies', c);
+                        for(let l of data.ledgers) await DB.put('ledgers', l);
+                        for(let v of data.vouchers) await DB.put('vouchers', v);
+                        for(let vl of data.voucher_lines) await DB.put('voucher_lines', vl);
+
+                        InternalUI.toast('Backup restored successfully. Reloading...');
+                        setTimeout(() => location.reload(), 1500);
+                    } catch(err) {
+                        InternalUI.toast('Failed to import data: Invalid file format', 'error');
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = ''; 
+            }
+        };
+
+        // Bootstrap
+        window.addEventListener('DOMContentLoaded', App.init);
+    </script>
 </body>
 </html>
