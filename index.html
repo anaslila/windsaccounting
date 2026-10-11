@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Winds Accounting 26 - v1.03</title>
+    <title>Winds Accounting 26 - v1.05</title>
     <link rel="icon" type="image/jpeg" href="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU=">
     <style>
         :root {
@@ -119,15 +119,27 @@
         .nav-item:hover, .nav-item.active { background-color: var(--primary-light); color: var(--bg-white); }
         
         .sidebar-footer {
-            padding: 12px;
-            background-color: var(--primary-light);
+            padding: 8px 12px;
+            background-color: #f3f4f6;
             text-align: center;
             font-size: 12px;
             border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
-        .sidebar-footer a { display: inline-block; text-decoration: none; color: #cbd5e1; opacity: 0.9; transition: opacity 0.2s; }
-        .sidebar-footer a:hover { opacity: 1; }
-        .sidebar-footer img { max-width: 120px; margin-top: 4px; pointer-events: auto; }
+        .sidebar-footer span {
+            color: #6b7280;
+        }
+        .sidebar-footer a { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            transition: opacity 0.2s; 
+        }
+        .sidebar-footer a:hover { opacity: 0.8; }
+        .sidebar-footer img { height: 14px; pointer-events: auto; }
 
         .main-content {
             flex: 1;
@@ -211,6 +223,20 @@
         .flex { display: flex; gap: 16px; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         
+        /* Dashboard Notice */
+        #fy-warning-banner {
+            display: none; 
+            background-color: #fffbeb; 
+            border: 1px solid #fde68a; 
+            border-left: 4px solid var(--warning); 
+            padding: 12px 16px; 
+            border-radius: 4px; 
+            margin-bottom: 24px; 
+            align-items: center; 
+            gap: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
         /* Cards & Dashboard */
         .grid-cards {
             display: grid;
@@ -316,7 +342,7 @@
     <aside class="sidebar">
         <div class="brand">
             <img src="https://media.istockphoto.com/id/1152129412/vector/water-waves-logo-design-vector-icon.jpg?s=612x612&w=0&k=20&c=ECpNUCEoa9GQtwuIpI3qJ9NW_In6UW_DmSg33JNaAxU=" alt="Winds Accounting 26 Logo">
-            <div class="brand-text">Winds Accounting 26<br><small style="font-size:10px; opacity:0.7; font-weight:normal;">v1.03</small></div>
+            <div class="brand-text">Winds Accounting 26<br><small style="font-size:10px; opacity:0.7; font-weight:normal;">v1.05</small></div>
         </div>
         <nav class="nav-menu">
             <a class="nav-item active" data-target="view-dashboard">
@@ -345,7 +371,7 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            <div>Created by</div>
+            <span>Created by</span>
             <a href="https://novussolutions.vercel.app/" target="_blank">
                 <img src="https://i.postimg.cc/yNNSympY/image.png" alt="Novus Solutions">
             </a>
@@ -374,6 +400,13 @@
             <!-- VIEW: DASHBOARD -->
             <div id="view-dashboard" class="view-section active">
                 <h1>Business Dashboard</h1>
+
+                <!-- Financial Year Warning Banner -->
+                <div id="fy-warning-banner">
+                    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <span id="fy-warning-text" style="color: var(--text-main); font-size: 14px; font-weight: bold;"></span>
+                </div>
+
                 <div class="grid-cards">
                     <div class="card">
                         <div class="card-title">Total Receipts (FY)</div>
@@ -501,7 +534,7 @@
 
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="App.resetVoucherForm()">Clear</button>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary" id="btn-save-voucher">
                             <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                             Save & Post Voucher
                         </button>
@@ -568,7 +601,7 @@
                 <div class="card mb-4" id="edit-company-card" style="display:none;">
                     <h2>Company Settings</h2>
                     <p class="mb-4" style="color:var(--text-muted); font-size:13px;">Update the details of the currently selected company.</p>
-                    <form onsubmit="App.updateCurrentCompany(event)">
+                    <form onsubmit="App.updateCurrentCompany(event)" id="edit-company-form">
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Company Name</label>
@@ -588,7 +621,7 @@
                             </div>
                         </div>
                         <div class="form-actions" style="margin-top: 16px;">
-                            <button type="submit" class="btn-primary">
+                            <button type="submit" class="btn-primary" id="btn-save-company-settings">
                                 <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                                 Save Changes
                             </button>
@@ -633,9 +666,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Create Company</h2>
-                <button class="modal-close" onclick="App.closeModal('company-modal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <button class="modal-close" onclick="App.closeModal('company-modal')" tabindex="-1"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
-            <form onsubmit="App.saveCompany(event)">
+            <form onsubmit="App.saveCompany(event)" id="create-company-form">
                 <div class="form-group mb-4">
                     <label>Company Name</label>
                     <input type="text" id="comp-name" required placeholder="e.g. Winds Enterprises">
@@ -653,7 +686,7 @@
                     <input type="text" id="comp-gstin" placeholder="27XXXXX0000X1Z5">
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">Save Company</button>
+                    <button type="submit" class="btn-primary" id="btn-create-company">Save Company</button>
                 </div>
             </form>
         </div>
@@ -664,7 +697,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="ledger-modal-title">Create Account</h2>
-                <button class="modal-close" onclick="App.closeModal('ledger-modal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <button class="modal-close" onclick="App.closeModal('ledger-modal')" tabindex="-1"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
             <form onsubmit="App.saveLedger(event)" id="ledger-form">
                 <input type="hidden" id="ledg-id">
@@ -702,7 +735,7 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">Save Account</button>
+                    <button type="submit" class="btn-primary" id="btn-save-ledger">Save Account</button>
                 </div>
             </form>
         </div>
@@ -716,7 +749,7 @@
             </div>
             <h2 id="confirm-msg" style="margin-bottom: 24px;">Are you sure?</h2>
             <div class="form-actions" style="justify-content: center; margin-top: 0;">
-                <button type="button" class="btn-secondary" onclick="InternalUI.closeConfirm()">Cancel</button>
+                <button type="button" class="btn-secondary" onclick="InternalUI.closeConfirm()" tabindex="-1">Cancel</button>
                 <button type="button" class="btn-danger" id="confirm-yes">Confirm</button>
             </div>
         </div>
@@ -727,7 +760,7 @@
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             <h2 id="alert-msg" style="margin-bottom: 24px;">Alert</h2>
             <div class="form-actions" style="justify-content: center; margin-top: 0;">
-                <button type="button" class="btn-primary" onclick="InternalUI.closeAlert()">OK</button>
+                <button type="button" class="btn-primary" onclick="InternalUI.closeAlert()" id="alert-ok">OK</button>
             </div>
         </div>
     </div>
@@ -741,6 +774,62 @@
          * Winds Accounting 26 Core Engine
          * Built with Vanilla JS & IndexedDB
          */
+
+        // Global Keybindings for Enter & Esc
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('alert-modal').classList.contains('active')) {
+                    InternalUI.closeAlert(); return;
+                }
+                if (document.getElementById('confirm-modal').classList.contains('active')) {
+                    InternalUI.closeConfirm(); return;
+                }
+                if (document.getElementById('ledger-modal').classList.contains('active')) {
+                    App.closeModal('ledger-modal'); return;
+                }
+                if (document.getElementById('company-modal').classList.contains('active')) {
+                    App.closeModal('company-modal'); return;
+                }
+                if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+                    document.activeElement.blur();
+                }
+            }
+
+            if (e.key === 'Enter') {
+                if (document.getElementById('alert-modal').classList.contains('active')) {
+                    e.preventDefault();
+                    InternalUI.closeAlert();
+                    return;
+                }
+                if (document.getElementById('confirm-modal').classList.contains('active')) {
+                    e.preventDefault();
+                    document.getElementById('confirm-yes').click();
+                    return;
+                }
+                
+                // Allow normal form submit if we are inside standard forms unless it's a textarea
+                if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') {
+                    // Let enter create a new line in textarea
+                    return;
+                }
+                
+                // Global Enter acts as Save for open modals if focus isn't strictly on the button
+                if (document.getElementById('ledger-modal').classList.contains('active')) {
+                    if (document.activeElement.type !== 'submit') {
+                        e.preventDefault();
+                        document.getElementById('btn-save-ledger').click();
+                        return;
+                    }
+                }
+                if (document.getElementById('company-modal').classList.contains('active')) {
+                    if (document.activeElement.type !== 'submit') {
+                        e.preventDefault();
+                        document.getElementById('btn-create-company').click();
+                        return;
+                    }
+                }
+            }
+        });
 
         // Context Menu Restrictions
         document.addEventListener('contextmenu', (e) => {
@@ -994,7 +1083,10 @@
 
             // Modal Controls
             openModal: id => document.getElementById(id).classList.add('active'),
-            closeModal: id => document.getElementById(id).classList.remove('active'),
+            closeModal: id => {
+                document.getElementById(id).classList.remove('active');
+                if(document.activeElement) document.activeElement.blur();
+            },
 
             autoAdjustEndDate: (startId, endId) => {
                 const startVal = document.getElementById(startId).value;
@@ -1002,7 +1094,36 @@
                 const d = new Date(startVal);
                 d.setFullYear(d.getFullYear() + 1);
                 d.setDate(d.getDate() - 1);
-                document.getElementById(endId).value = d.toISOString().split('T')[0];
+                
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                document.getElementById(endId).value = `${y}-${m}-${day}`;
+            },
+
+            addOneYear: (dateStr) => {
+                if(!dateStr) return "";
+                const [y, m, d] = dateStr.split('-');
+                return `${parseInt(y)+1}-${m}-${d}`;
+            },
+
+            checkAndRollOverFY: async (comp) => {
+                if (!comp.fyEnd) return comp;
+                const todayStr = new Date().toISOString().split('T')[0];
+                let updated = false;
+                
+                // Automatically increment year if current date is past the end date
+                while (todayStr > comp.fyEnd) {
+                    comp.fyStart = App.addOneYear(comp.fyStart);
+                    comp.fyEnd = App.addOneYear(comp.fyEnd);
+                    updated = true;
+                }
+                
+                if (updated) {
+                    await DB.put('companies', comp);
+                    InternalUI.toast("Financial Year has been automatically updated.");
+                }
+                return comp;
             },
 
             // Company Management
@@ -1023,7 +1144,6 @@
                     select.value = savedId;
                     await App.switchCompany(savedId);
                 } else if (State.companies.length === 0) {
-                    // Pre-fill smart date for new
                     const defaultStart = `${new Date().getFullYear()}-04-01`;
                     document.getElementById('comp-fystart').value = defaultStart;
                     App.autoAdjustEndDate('comp-fystart', 'comp-fyend');
@@ -1033,9 +1153,13 @@
 
             switchCompany: async (id) => {
                 if (!id) return;
+                let comp = State.companies.find(c => c.id === id);
+                
+                // Automatically Check and Roll Over FY
+                comp = await App.checkAndRollOverFY(comp);
+                
                 State.currentCompanyId = id;
                 localStorage.setItem('lastCompanyId', id);
-                const comp = State.companies.find(c => c.id === id);
                 
                 document.getElementById('financial-year-display').textContent = `FY: ${Format.date(comp.fyStart)} - ${Format.date(comp.fyEnd)}`;
                 await App.loadLedgers();
@@ -1048,7 +1172,7 @@
 
             saveCompany: async (e) => {
                 e.preventDefault();
-                await App.showLoader(3000); // 3 seconds loading for company creation
+                await App.showLoader(3000); 
                 
                 const id = Format.generateId();
                 const comp = {
@@ -1120,7 +1244,7 @@
             confirmDeleteCompany: () => {
                 if (!State.currentCompanyId) return;
                 InternalUI.confirm("This will delete the company and ALL its accounting records. This cannot be undone. Proceed?", async () => {
-                    await App.showLoader(3000); // 3 sec delay
+                    await App.showLoader(3000); 
                     
                     const ledgers = await DB.getAll('ledgers', 'companyId', State.currentCompanyId);
                     for(let l of ledgers) await DB.delete('ledgers', l.id);
@@ -1175,7 +1299,6 @@
                 const id = document.getElementById('ledg-id').value;
                 const name = document.getElementById('ledg-name').value.trim();
                 
-                // Duplicate check
                 const exists = State.ledgers.find(l => l.name.toLowerCase() === name.toLowerCase() && l.id !== id);
                 if (exists) return InternalUI.toast('Account name already exists', 'error');
 
@@ -1199,7 +1322,6 @@
 
             confirmDeleteLedger: (id) => {
                 InternalUI.confirm("Are you sure you want to delete this account?", async () => {
-                    // check for transactions
                     const lines = await DB.getAll('voucher_lines', 'ledgerId', id);
                     if(lines.length > 0) {
                         InternalUI.alert("Cannot delete account. It has associated transactions.");
@@ -1305,7 +1427,7 @@
                             div.className = "combo-list-item";
                             div.textContent = l.name;
                             div.dataset.id = l.id;
-                            div.addEventListener('mousedown', (e) => { // mousedown fires before input blur
+                            div.addEventListener('mousedown', (e) => { 
                                 e.preventDefault();
                                 inputEl.value = l.name;
                                 hiddenVal.value = l.id;
@@ -1313,18 +1435,20 @@
                             });
                             list.appendChild(div);
                         });
+                        
+                        // Default select first item for smart auto-select on tab
+                        currentFocus = 0;
+                        addActive(list.querySelectorAll('.combo-list-item[data-id]'));
                     }
                 };
 
                 inputEl.addEventListener('focus', () => {
-                    currentFocus = -1;
                     renderList(inputEl.value);
                     list.style.display = 'block';
                 });
 
                 inputEl.addEventListener('input', (e) => {
-                    hiddenVal.value = ""; // clear hidden if typing
-                    currentFocus = -1;
+                    hiddenVal.value = ""; 
                     renderList(e.target.value);
                 });
 
@@ -1340,6 +1464,13 @@
                         e.preventDefault();
                         if (currentFocus > -1 && items[currentFocus]) {
                             items[currentFocus].dispatchEvent(new MouseEvent('mousedown'));
+                        }
+                    } else if (e.key === "Tab") {
+                        if (currentFocus > -1 && items[currentFocus] && list.style.display !== 'none') {
+                            inputEl.value = items[currentFocus].textContent;
+                            hiddenVal.value = items[currentFocus].dataset.id;
+                            list.style.display = 'none';
+                            // Let native tab focus the next element
                         }
                     }
                 });
@@ -1388,7 +1519,6 @@
                 `;
                 tbody.appendChild(tr);
                 
-                // Initialize custom combo box on this row
                 App.setupComboBox(tr.querySelector('.combo-input'));
             },
 
@@ -1551,6 +1681,35 @@
 
             loadDashboard: async () => {
                 if(!State.currentCompanyId) return;
+
+                // Notice Banner Logic
+                const comp = State.companies.find(c => c.id === State.currentCompanyId);
+                if (comp && comp.fyEnd) {
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+                    const endDate = new Date(comp.fyEnd);
+                    endDate.setHours(0,0,0,0);
+                    
+                    const diffTime = endDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const banner = document.getElementById('fy-warning-banner');
+                    
+                    if (diffDays >= 0 && diffDays <= 30) {
+                        banner.style.display = 'flex';
+                        let noticeText = "";
+                        if (diffDays === 0) {
+                            noticeText = "Professional Notice: The current financial year concludes TODAY. Please ensure necessary closing entries are prepared.";
+                        } else if (diffDays === 1) {
+                            noticeText = "Professional Notice: The current financial year concludes TOMORROW. Please ensure necessary closing entries are prepared.";
+                        } else {
+                            noticeText = `Professional Notice: The current financial year concludes in ${diffDays} days (${Format.date(comp.fyEnd)}). Please ensure necessary closing entries are prepared.`;
+                        }
+                        document.getElementById('fy-warning-text').textContent = noticeText;
+                    } else {
+                        banner.style.display = 'none';
+                    }
+                }
+
                 const vouchers = await DB.getAll('vouchers', 'companyId', State.currentCompanyId);
                 document.getElementById('dash-vouchers').textContent = vouchers.length;
 
@@ -1717,7 +1876,7 @@
             exportBackup: async () => {
                 try {
                     const data = {
-                        version: '1.03',
+                        version: '1.05',
                         date: new Date().toISOString(),
                         companies: await DB.getAll('companies'),
                         ledgers: await DB.getAll('ledgers'),
